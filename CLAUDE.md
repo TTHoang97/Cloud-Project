@@ -39,7 +39,7 @@ Cloud-Project/
 - [x] GitHub repo created with SSH authentication
 - [x] Go REST API built with /health endpoint
 - [x] Dockerfile created (in progress - not yet verified running)
-- [ ] Docker image built and verified running locally
+- [x] Docker image built and verified running locally
 - [ ] GitHub Actions CI/CD pipeline
 - [ ] Terraform AWS infrastructure provisioned
 - [ ] Application deployed to AWS

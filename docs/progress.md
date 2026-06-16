@@ -38,7 +38,7 @@ end to end.
 - application/json is the standard Content-Type for API responses
 
 **Dockerfile multi-stage build**
-- Stage 1 (builder): Uses golang:1.23-alpine to compile the Go binary
+- Stage 1 (builder): Uses golang:1.26-alpine to compile the Go binary. 1.26 is the latest version of Go at the current time(6/16/26)
 - Stage 2: Uses a minimal alpine image and copies only the compiled binary
 - Result is a small, production-appropriate container image
 
@@ -53,7 +53,5 @@ end to end.
 - None
 
 ### Next Steps
-- Verify Docker image builds and runs locally
-- Push all files to GitHub
 - Set up GitHub Actions CI/CD pipeline
 - Begin Terraform configuration for AWS infrastructure
