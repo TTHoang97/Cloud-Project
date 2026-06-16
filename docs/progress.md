@@ -49,9 +49,39 @@ end to end.
   or how — Terraform files are that record
 - This is standard practice in DevOps roles and a direct talking point in interviews
 
-### Current Blockers
-- None
+## Session 2
+
+### What Was Built
+- Created GitHub Actions CI pipeline with two jobs: build and docker
+- Pipeline automatically triggers on every push to main branch
+
+### What Was Learned
+
+**Continuous Integration (CI)**
+- CI automatically builds and tests code on every push
+- Prevents "integration hell" by catching broken code immediately
+- Standard infrastructure in professional engineering teams
+
+**CI vs CD**
+- CI: automated building and testing on every push
+- CD: automated deployment of successfully built artifacts to an environment
+- We have CI now, CD comes when we wire up AWS deployment
+
+**GitHub Actions concepts**
+- Workflows are defined in .github/workflows/ as yaml files
+- Each job runs on a fresh isolated virtual machine
+- Jobs have no shared state — each needs its own checkout step
+- actions/checkout@v4 clones your repo onto the runner machine so code is available
+- Actions are versioned with @ syntax — pinning versions prevents unexpected changes
+
+**go build -o main .**
+- -o flag specifies the output binary name
+- . tells Go to compile code in the current directory
 
 ### Next Steps
-- Set up GitHub Actions CI/CD pipeline
+- Set up Terraform to provision AWS infrastructure
+- Wire up CD in the pipeline to deploy to AWS
+- Configure monitoring
+
+### Next Steps
 - Begin Terraform configuration for AWS infrastructure
