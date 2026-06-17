@@ -43,7 +43,7 @@ Cloud-Project/
 - [x] GitHub Actions CI/CD pipeline
 - [X] Terraform AWS infrastructure provisioned
 - [X] Application deployed to AWS
-- [ ] CD pipeline wired up to auto-deploy on push
+- [x] CD pipeline wired up to auto-deploy on push
 - [ ] Monitoring configured
 
 ## How To Use This File

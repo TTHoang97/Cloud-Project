@@ -123,9 +123,47 @@ end to end.
 - Push tagged image to ECR
 - Force ECS service redeployment to pick up new image
 
-### Next Steps
-- Wire up CD in GitHub Actions to auto-deploy on every push
-- Configure monitoring via CloudWatch
+## Session 4
+
+### What Was Built
+- Full CD pipeline added to GitHub Actions
+- Every push to main now automatically builds, tests, pushes to ECR,
+  and redeploys to ECS without any manual steps
+- Live endpoint confirmed returning JSON after automated deployment
+- .gitignore added to protect sensitive Terraform files from being committed
+
+### What Was Learned
+
+**CD Pipeline concepts**
+- needs: build ensures deploy job only runs if build passes — broken code
+  never gets deployed
+- if: github.ref condition restricts deployment to main branch only —
+  pull requests only trigger build and test, not deployment
+- IMAGE_TAG uses github.sha (commit hash) instead of latest — every
+  deployment is traceable to a specific commit
+- wait-for-service-stability makes the pipeline wait until ECS confirms
+  the new container is healthy before marking the run green
+
+**GitHub Secrets**
+- AWS credentials stored as encrypted secrets in GitHub repo settings
+- Referenced in yaml as ${{ secrets.AWS_ACCESS_KEY_ID }} — never exposed
+  in logs or code
+- The correct way to handle credentials in any CI/CD pipeline
+
+**Security concepts**
+- Never commit .terraform/, terraform.tfstate, or .terraform.lock.hcl
+- tfstate contains live infrastructure state including sensitive values
+- .gitignore protects against accidental commits of sensitive files
+- Bots actively scan GitHub for exposed credentials — exposure can result
+  in immediate account compromise
+
+**Full pipeline flow**
+- git push → GitHub Actions triggers → build job compiles and tests Go
+  code → deploy job builds Docker image → pushes to ECR with commit SHA
+  as tag → downloads current ECS task definition → renders new task
+  definition with updated image → deploys to ECS → waits for stability
+  confirmation → pipeline marks green
 
 ### Next Steps
-- Begin Terraform configuration for AWS infrastructure
+- Configure monitoring via CloudWatch
+- Clean up and document the project README for portfolio presentation
