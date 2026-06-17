@@ -40,9 +40,10 @@ Cloud-Project/
 - [x] Go REST API built with /health endpoint
 - [x] Dockerfile created (in progress - not yet verified running)
 - [x] Docker image built and verified running locally
-- [ ] GitHub Actions CI/CD pipeline
-- [ ] Terraform AWS infrastructure provisioned
-- [ ] Application deployed to AWS
+- [x] GitHub Actions CI/CD pipeline
+- [X] Terraform AWS infrastructure provisioned
+- [X] Application deployed to AWS
+- [ ] CD pipeline wired up to auto-deploy on push
 - [ ] Monitoring configured
 
 ## How To Use This File

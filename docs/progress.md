@@ -83,5 +83,49 @@ end to end.
 - Wire up CD in the pipeline to deploy to AWS
 - Configure monitoring
 
+## Session 3
+
+### What Was Built
+- Terraform configuration with three files: main.tf, variables.tf, outputs.tf
+- AWS infrastructure provisioned including VPC, subnets, internet gateway,
+  route tables, security groups, ALB, ECR repository, ECS cluster, ECS task
+  definition, ECS service, IAM roles, and CloudWatch log group
+- Docker image pushed to ECR
+- Application deployed and running on AWS ECS Fargate
+- Live endpoint confirmed returning JSON response
+
+### What Was Learned
+
+**Terraform basics**
+- Infrastructure as code — resources defined in .tf files and provisioned
+  by running terraform plan then terraform apply
+- variables.tf defines reusable input values
+- outputs.tf surfaces useful values after apply like the app URL
+- terraform plan previews changes without applying them — always run this first
+- Resources reference each other by name e.g. aws_lb.app_lb.arn
+
+**AWS infrastructure concepts**
+- VPC: isolated network environment for your resources
+- Subnets: subdivisions of the VPC across availability zones for redundancy
+- Internet Gateway: connects the VPC to the public internet
+- Route Table: defines where network traffic gets directed
+- Security Groups: firewall rules controlling what traffic is allowed in and out
+- ALB (Application Load Balancer): accepts public traffic on port 80 and
+  forwards it to containers on port 8080 internally
+- ECR: AWS private Docker image registry
+- ECS Fargate: managed container runtime — AWS handles the underlying servers
+- IAM Role: grants ECS permission to pull images and write logs
+- CloudWatch Log Group: captures container logs for observability
+
+**ECR image push process**
+- Authenticate Docker to ECR using aws ecr get-login-password
+- Tag local image with full ECR repository URL
+- Push tagged image to ECR
+- Force ECS service redeployment to pick up new image
+
+### Next Steps
+- Wire up CD in GitHub Actions to auto-deploy on every push
+- Configure monitoring via CloudWatch
+
 ### Next Steps
 - Begin Terraform configuration for AWS infrastructure
