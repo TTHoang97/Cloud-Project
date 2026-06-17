@@ -287,3 +287,41 @@ resource "aws_ecs_service" "app" {
         Name = "${var.app_name}-service"
     }
 }
+
+# CloudWatch Alarm for high HTTP 5xx errors
+resource "aws_cloudwatch_metric_alarm" "http_5xx" {
+    alarm_name = "${var.app_name}-http-5xx-alarm"
+    comparison_operator = "GreaterThanThreshold"
+    evaluation_periods = 2
+    metric_name = "HTTPCode_Target_5XX_Count"
+    namespace = "AWS/ApplicationELB"
+    period = 60
+    statistic = "Sum"
+    threshold = 10
+    alarm_description = "Triggers when 5xx errors exceed 10 for 2 consecutive minutes"
+    treat_missing_data = "notBreaching"
+
+    dimensions = {
+        LoadBalancer = aws_lb.app_lb.arn_suffix
+        TargetGroup = aws_lb_target_group.app.arn_suffix
+    }
+}
+
+# CloudWatch Alarm for ECS CPU Utilization
+resource "aws_cloudwatch_metric_alarm" "cpu_utilization" {
+    alarm_name = "${var.app_name}-cpu-utilization-alarm"
+    comparison_operator = "GreaterThanThreshold"
+    evaluation_periods = 2
+    metric_name = "CPUUtilization"
+    namespace = "AWS/ECS"
+    period = 60
+    statistic = "Average"
+    threshold = 80
+    alarm_description = "Triggers when CPU utilization exceeds 80% for 2 consecutive minutes"
+    treat_missing_data = "notBreaching"
+
+    dimensions = {
+        ClusterName = aws_ecs_cluster.main.name
+        ServiceName = aws_ecs_service.app.name
+    }
+}
