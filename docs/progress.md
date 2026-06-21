@@ -2,168 +2,87 @@
 
 ## What We're Building
 A Go REST API containerized with Docker, deployed to AWS using Terraform for
-infrastructure provisioning, with a CI/CD pipeline via GitHub Actions and basic
-monitoring via CloudWatch. The goal is demonstrating a full DevOps lifecycle
-end to end.
+infrastructure provisioning, with a CI/CD pipeline via GitHub Actions and
+monitoring via CloudWatch. Full DevOps lifecycle, end to end. PROJECT COMPLETE
+as of Session 5 — now in job application phase.
 
-## Full Project Sequence
+## Full Project Sequence (all complete)
 1. Go REST API — done
-2. Docker containerization — in progress
-3. GitHub Actions CI/CD pipeline
-4. Terraform to provision AWS infrastructure
-5. Deploy containerized app to AWS via the pipeline
-6. Monitoring with CloudWatch, stretch goal Grafana/Prometheus
+2. Docker containerization — done
+3. GitHub Actions CI/CD pipeline — done
+4. Terraform AWS infrastructure — done
+5. Deploy containerized app to AWS via pipeline — done
+6. Monitoring with CloudWatch — done
+7. README for portfolio presentation — done
 
 ---
 
 ## Session 1
+Built GitHub repo with SSH auth, Go REST API with /health endpoint, Dockerfile
+with multi-stage build, CLAUDE.md and docs/progress.md.
 
-### What Was Built
-- Created GitHub repo (Cloud-Project) with SSH authentication configured
-- Built a Go REST API with a single /health endpoint using Go's standard library
-- Created a Dockerfile using a multi-stage build
-- Created CLAUDE.md and docs/progress.md for project context and progress tracking
-
-### What Was Learned
-
-**Go REST API basics**
-- net/http handles routing and HTTP server functionality
-- Handler functions take two parameters: ResponseWriter (write back to caller)
-  and Request (incoming request data)
-- json.NewEncoder writes Go data structures directly into the response as JSON
-
-**HTTP Headers**
-- Headers are metadata that travel alongside requests and responses
-- Content-Type tells the receiver what format the response body is in
-- application/json is the standard Content-Type for API responses
-
-**Dockerfile multi-stage build**
-- Stage 1 (builder): Uses golang:1.26-alpine to compile the Go binary. 1.26 is the latest version of Go at the current time(6/16/26)
-- Stage 2: Uses a minimal alpine image and copies only the compiled binary
-- Result is a small, production-appropriate container image
-
-**Why Terraform over manual AWS console**
-- Infrastructure as code means your environment is version controlled and
-  reproducible — anyone can clone the repo and spin up the same environment
-- Clicking through the AWS console manually leaves no record of what was built
-  or how — Terraform files are that record
-- This is standard practice in DevOps roles and a direct talking point in interviews
+Learned: net/http basics, HTTP handler signatures, Content-Type headers,
+Dockerfile multi-stage build pattern, why Terraform beats manual console setup.
 
 ## Session 2
+Built GitHub Actions CI pipeline (build + docker jobs), triggers on push to main.
 
-### What Was Built
-- Created GitHub Actions CI pipeline with two jobs: build and docker
-- Pipeline automatically triggers on every push to main branch
-
-### What Was Learned
-
-**Continuous Integration (CI)**
-- CI automatically builds and tests code on every push
-- Prevents "integration hell" by catching broken code immediately
-- Standard infrastructure in professional engineering teams
-
-**CI vs CD**
-- CI: automated building and testing on every push
-- CD: automated deployment of successfully built artifacts to an environment
-- We have CI now, CD comes when we wire up AWS deployment
-
-**GitHub Actions concepts**
-- Workflows are defined in .github/workflows/ as yaml files
-- Each job runs on a fresh isolated virtual machine
-- Jobs have no shared state — each needs its own checkout step
-- actions/checkout@v4 clones your repo onto the runner machine so code is available
-- Actions are versioned with @ syntax — pinning versions prevents unexpected changes
-
-**go build -o main .**
-- -o flag specifies the output binary name
-- . tells Go to compile code in the current directory
-
-### Next Steps
-- Set up Terraform to provision AWS infrastructure
-- Wire up CD in the pipeline to deploy to AWS
-- Configure monitoring
+Learned: CI vs CD distinction, GitHub Actions job isolation (each job is a fresh
+VM, no shared state, each needs its own checkout step), actions/checkout@v4,
+action versioning with @ syntax, go build -o flag meaning.
 
 ## Session 3
+Built Terraform config (main.tf, variables.tf, outputs.tf). Provisioned VPC,
+subnets, IGW, route tables, security groups, ALB, ECR, ECS cluster/task/service,
+IAM roles, CloudWatch log group. Pushed Docker image to ECR. App deployed and
+live on ECS Fargate, confirmed JSON response from live endpoint.
 
-### What Was Built
-- Terraform configuration with three files: main.tf, variables.tf, outputs.tf
-- AWS infrastructure provisioned including VPC, subnets, internet gateway,
-  route tables, security groups, ALB, ECR repository, ECS cluster, ECS task
-  definition, ECS service, IAM roles, and CloudWatch log group
-- Docker image pushed to ECR
-- Application deployed and running on AWS ECS Fargate
-- Live endpoint confirmed returning JSON response
-
-### What Was Learned
-
-**Terraform basics**
-- Infrastructure as code — resources defined in .tf files and provisioned
-  by running terraform plan then terraform apply
-- variables.tf defines reusable input values
-- outputs.tf surfaces useful values after apply like the app URL
-- terraform plan previews changes without applying them — always run this first
-- Resources reference each other by name e.g. aws_lb.app_lb.arn
-
-**AWS infrastructure concepts**
-- VPC: isolated network environment for your resources
-- Subnets: subdivisions of the VPC across availability zones for redundancy
-- Internet Gateway: connects the VPC to the public internet
-- Route Table: defines where network traffic gets directed
-- Security Groups: firewall rules controlling what traffic is allowed in and out
-- ALB (Application Load Balancer): accepts public traffic on port 80 and
-  forwards it to containers on port 8080 internally
-- ECR: AWS private Docker image registry
-- ECS Fargate: managed container runtime — AWS handles the underlying servers
-- IAM Role: grants ECS permission to pull images and write logs
-- CloudWatch Log Group: captures container logs for observability
-
-**ECR image push process**
-- Authenticate Docker to ECR using aws ecr get-login-password
-- Tag local image with full ECR repository URL
-- Push tagged image to ECR
-- Force ECS service redeployment to pick up new image
+Learned: Terraform plan/apply workflow, core AWS networking concepts (VPC,
+subnets, IGW, route tables, security groups), ALB port translation (80 public
+→ 8080 container), ECR auth/tag/push process, ECS Fargate as managed container
+runtime.
 
 ## Session 4
+Built full CD pipeline in GitHub Actions — auto build, test, push to ECR,
+redeploy to ECS on every push to main. Added .gitignore after a near-miss
+where terraform.tfstate and .terraform/ were about to be committed.
 
-### What Was Built
-- Full CD pipeline added to GitHub Actions
-- Every push to main now automatically builds, tests, pushes to ECR,
-  and redeploys to ECS without any manual steps
-- Live endpoint confirmed returning JSON after automated deployment
-- .gitignore added to protect sensitive Terraform files from being committed
+Learned: needs: keyword for job dependencies, if: github.ref to restrict
+deploys to main only, commit SHA image tagging for traceability, GitHub
+Secrets for credential handling, why tfstate/.terraform/ must never be
+committed (live infra state, large binaries), bots actively scan GitHub for
+exposed AWS credentials.
 
-### What Was Learned
+**Important debugging note:** .gitignore initially failed to exclude the
+Terraform/ folder on Windows Git Bash despite correct-looking entries —
+resolved using wildcard patterns (`**/.terraform/`, `*.tfstate` without
+directory prefix) instead of path-prefixed patterns. If similar gitignore
+issues recur, try wildcard-first patterns.
 
-**CD Pipeline concepts**
-- needs: build ensures deploy job only runs if build passes — broken code
-  never gets deployed
-- if: github.ref condition restricts deployment to main branch only —
-  pull requests only trigger build and test, not deployment
-- IMAGE_TAG uses github.sha (commit hash) instead of latest — every
-  deployment is traceable to a specific commit
-- wait-for-service-stability makes the pipeline wait until ECS confirms
-  the new container is healthy before marking the run green
+## Session 5
+Added CloudWatch alarms for high 5xx errors and high CPU utilization via
+Terraform, both using evaluation_periods = 2 to avoid false-positive triggers
+from single spikes. Verified both alarms active in AWS console.
 
-**GitHub Secrets**
-- AWS credentials stored as encrypted secrets in GitHub repo settings
-- Referenced in yaml as ${{ secrets.AWS_ACCESS_KEY_ID }} — never exposed
-  in logs or code
-- The correct way to handle credentials in any CI/CD pipeline
+Learned: evaluation_periods/period/treat_missing_data semantics, alarm
+dimensions scoping (LoadBalancer/TargetGroup vs ClusterName/ServiceName),
+logs vs alarms as complementary observability (logs = what happened, alarms
+= something's wrong now).
 
-**Security concepts**
-- Never commit .terraform/, terraform.tfstate, or .terraform.lock.hcl
-- tfstate contains live infrastructure state including sensitive values
-- .gitignore protects against accidental commits of sensitive files
-- Bots actively scan GitHub for exposed credentials — exposure can result
-  in immediate account compromise
+## Session 6
+Wrote comprehensive README.md for the repo (architecture diagram, tech stack
+table, what-this-demonstrates section, local dev instructions, CI/CD pipeline
+explanation). Project is now portfolio-presentable.
 
-**Full pipeline flow**
-- git push → GitHub Actions triggers → build job compiles and tests Go
-  code → deploy job builds Docker image → pushes to ECR with commit SHA
-  as tag → downloads current ECS task definition → renders new task
-  definition with updated image → deploys to ECS → waits for stability
-  confirmation → pipeline marks green
+Began resume repositioning: rewriting professional summary and adding a
+dedicated Projects section to lead with Cloud-Project as primary credential,
+ahead of work history. Built rehearsed interview talking points for the five
+questions most likely to come up about this project (Fargate vs EC2, Terraform
+vs console, commit SHA tagging, alarm evaluation periods, load balancer for a
+single container).
 
 ### Next Steps
-- Configure monitoring via CloudWatch
-- Clean up and document the project README for portfolio presentation
+- Finish reviewing/finalizing the repositioned resume
+- Resume targeted job applications (2-3/day, quality over volume) once resume
+  is finalized
+- Optional stretch: expand API beyond /health, add Grafana/Prometheus
