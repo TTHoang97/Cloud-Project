@@ -9,10 +9,13 @@ and automated deployment to AWS.
 GET http://cloud-project-alb-1395068385.us-east-1.elb.amazonaws.com/health
 
 ## Architecture
+
+```
 GitHub Push → GitHub Actions CI/CD → Docker Build → ECR → ECS Fargate
-↑
-Terraform-provisioned infrastructure
-VPC · ALB · ECS · ECR · CloudWatch
+                                                              ↑
+                                          Terraform-provisioned infrastructure
+                                          VPC · ALB · ECS · ECR · CloudWatch
+```
 
 ## Tech Stack
 
@@ -42,20 +45,22 @@ VPC · ALB · ECS · ECR · CloudWatch
   traffic from the load balancer via security group rules
 
 ## Project Structure
-Cloud-Project/
 
-├── main.go                      # Go REST API
-├── go.mod                       # Go module definition
-├── Dockerfile                   # Multi-stage container build
+```
+Cloud-Project/
+├── main.go              # Go REST API 
+├── go.mod                # Go module definition
+├── Dockerfile             # Multi-stage container build
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml           # CI/CD pipeline
+│       └── deploy.yml    # CI/CD pipeline
 ├── Terraform/
-│   ├── main.tf                  # AWS infrastructure
-│   ├── variables.tf             # Input variables
-│   └── outputs.tf               # Output values
+│   ├── main.tf            # AWS infrastructure
+│   ├── variables.tf       # Input variables
+│   └── outputs.tf         # Output values
 └── docs/
-└── progress.md              # Build log and learnings
+    └── progress.md        # Build log and learnings
+```
 
 ## Infrastructure
 
