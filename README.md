@@ -4,10 +4,6 @@ A production-pattern REST API demonstrating a complete DevOps lifecycle —
 from local development through containerization, infrastructure provisioning,
 and automated deployment to AWS.
 
-## Live Endpoint
-
-GET http://cloud-project-alb-1395068385.us-east-1.elb.amazonaws.com/health
-
 ## Architecture
 
 ```
