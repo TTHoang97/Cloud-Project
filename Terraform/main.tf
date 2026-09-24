@@ -11,14 +11,9 @@ provider "aws" {
   region = var.aws_region
 }
 
-# ECR Repository to store Docker images
-resource "aws_ecr_repository" "app" {
-  name                 = var.app_name
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+# ECR repository is owned by the bootstrap layer (Terraform/bootstrap); look it up here
+data "aws_ecr_repository" "app" {
+  name = var.app_name
 }
 
 # VPC
@@ -243,7 +238,7 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([
     {
       name  = var.app_name
-      image = "${aws_ecr_repository.app.repository_url}:latest"
+      image = "${data.aws_ecr_repository.app.repository_url}:latest"
       portMappings = [
         {
           containerPort = var.container_port
