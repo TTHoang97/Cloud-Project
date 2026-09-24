@@ -18,4 +18,4 @@ tfplan
 .DS_Store
 
 # Notes
-CLAUDE.md
+CLAUDE.md*.tfstate.lock.info
