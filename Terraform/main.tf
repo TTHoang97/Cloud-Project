@@ -193,6 +193,17 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
+# Capacity providers - use Fargate Spot by default for lower cost
+resource "aws_ecs_cluster_capacity_providers" "main" {
+  cluster_name       = aws_ecs_cluster.main.name
+  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+
+  default_capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 1
+  }
+}
+
 # IAM Role for ECS Task Execution
 resource "aws_iam_role" "ecs_execution" {
   name = "${var.app_name}-ecs-task-execution-role"
@@ -281,7 +292,10 @@ resource "aws_ecs_service" "app" {
     container_port   = var.container_port
   }
 
-  depends_on = [aws_lb_listener.app]
+  depends_on = [
+    aws_lb_listener.app,
+    aws_ecs_cluster_capacity_providers.main
+  ]
 
   tags = {
     Name = "${var.app_name}-service"
