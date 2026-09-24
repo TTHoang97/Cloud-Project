@@ -4,6 +4,7 @@
 *.tfstate.backup
 tfplan
 *.tfplan
+*.tfstate.lock.info
 
 # AWS credentials
 .aws/
@@ -18,4 +19,4 @@ tfplan
 .DS_Store
 
 # Notes
-CLAUDE.md*.tfstate.lock.info
+CLAUDE.md
