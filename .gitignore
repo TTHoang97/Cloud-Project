@@ -20,3 +20,4 @@ tfplan
 
 # Notes
 CLAUDE.md
+*.tfstate.*.backup
