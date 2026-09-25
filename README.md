@@ -50,12 +50,15 @@ Cloud-Project/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml    # CI/CD pipeline
-├── Terraform/
-│   ├── main.tf            # AWS infrastructure
-│   ├── variables.tf       # Input variables
-│   └── outputs.tf         # Output values
-└── docs/
-    └── progress.md        # Build log and learnings
+└── Terraform/
+    ├── main.tf            # Disposable AWS app stack
+    ├── variables.tf       # Input variables
+    ├── outputs.tf         # Output values
+    └── bootstrap/         # Long-lived layer: state bucket, ECR, GitHub OIDC role
+        ├── main.tf
+        ├── oidc.tf
+        ├── outputs.tf
+        └── versions.tf
 ```
 
 ## Infrastructure

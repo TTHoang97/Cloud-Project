@@ -25,12 +25,15 @@ Cloud-Project/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml    # Full CI/CD pipeline (build, test, deploy)
-├── Terraform/
-│   ├── main.tf            # All AWS infrastructure + CloudWatch alarms
-│   ├── variables.tf       # Input variables
-│   └── outputs.tf         # app_url output
-└── docs/
-    └── progress.md        # Running log of progress and learnings
+└── Terraform/
+    ├── main.tf            # Disposable app stack + CloudWatch alarms
+    ├── variables.tf       # Input variables
+    ├── outputs.tf         # app_url output
+    └── bootstrap/         # Long-lived layer: S3 state bucket, ECR, GitHub OIDC role
+        ├── main.tf
+        ├── oidc.tf
+        ├── outputs.tf
+        └── versions.tf
 ```
 
 ## Decisions Made
